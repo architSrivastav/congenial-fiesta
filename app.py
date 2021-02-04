@@ -91,12 +91,11 @@ def detect_motion(frameCount):
 			x1, y1, x2, y2 = 100, 100, 300, 300
 			img_cropped = frame[y1:y2, x1:x2]
 			image_data = cv2.imencode('.jpg', img_cropped)[1].tobytes()	#tostrings
-      # if the total number of frames has reached a sufficient
+                        # if the total number of frames has reached a sufficient
 			# number to construct a reasonable background model, then
 			# continue to process the frame
 			if total > frameCount:
-				# detect motion in the image
-				# res, score = md.predict(image_data, label_lines, sess, softmax_tensor)
+				# detect sign language in the image
 				res, score = predict(image_data, label_lines, sess, softmax_tensor)
 				cv2.putText(frame, '%s' % (res.upper()), (100,400), cv2.FONT_HERSHEY_SIMPLEX, 4, (255,255,255), 4)
 				cv2.putText(frame, '(score = %.5f)' % (float(score)), (100,450), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
