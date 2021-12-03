@@ -5,15 +5,15 @@ import cv2
 import sys
 import os
 
-import matplotlib
-import matplotlib.pyplot as plt
+# import matplotlib
+# import matplotlib.pyplot as plt
 import copy
 import tensorflow as tf
 # Disable tensorflow compilation warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import tensorflow as tf
 
-from threading import Thread
+# from threading import Thread
 
 class SingleMotionDetector:
 	def __init__(self, src=0):
