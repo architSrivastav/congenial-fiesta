@@ -25,12 +25,13 @@ import tensorflow as tf
 # Disable tensorflow compilation warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import tensorflow as tf
+global frameCount = 16
 
 # initialize the output frame and a lock used to ensure thread-safe
 # exchanges of the output frames (useful for multiple browsers/tabs
 # are viewing tthe stream)
-outputFrame = None
-lock = threading.Lock()
+# outputFrame = None
+# lock = threading.Lock()
 # --------------------------- -----------------------------------
 # initialize a flask object
 app = Flask(__name__)
@@ -63,7 +64,7 @@ def predict(image_data, label_lines, sess, softmax_tensor):
 def detect_motion(frameCount):
 	# grab global references to the video stream, output frame, and
 	# lock variables
-	global vs, outputFrame, lock
+	global vs, outputFrame
 
 	# initialize the total number of framestostr
 	# read thus far
@@ -77,7 +78,7 @@ def detect_motion(frameCount):
 	with tf.compat.v1.Session() as sess:
 		# Feed the image_data as input to the graph and get first prediction
 		softmax_tensor = sess.graph.get_tensor_by_name('final_result:0')
-    c = 0
+		c = 0
 		res, score = '', 0.0
 		i = 0
 		mem = ''
@@ -99,29 +100,30 @@ def detect_motion(frameCount):
 				res, score = predict(image_data, label_lines, sess, softmax_tensor)
 				cv2.putText(frame, '%s' % (res.upper()), (100,400), cv2.FONT_HERSHEY_SIMPLEX, 4, (255,255,255), 4)
 				cv2.putText(frame, '(score = %.5f)' % (float(score)), (100,450), cv2.FONT_HERSHEY_SIMPLEX, 1, (255,255,255))
-      total += 1
-      with lock:
-				outputFrame = frame.copy()
+			total += 1
+			outputFrame = frame.copy()
+    #   with lock:
+	# 			outputFrame = frame.copy()
         
 def generate():
 	# grab global references to the output frame and lock variables
-	global outputFrame, lock
+	global outputFrame
 
 	# loop over frames from the output stream
 	while True:
 		# wait until the lock is acquired
-		with lock:
+		# with lock:
 			# check if the output frame is available, otherwise skip
 			# the iteration of the loop
-			if outputFrame is None:
-				continue
+		if outputFrame is None:
+			continue
 
 			# encode the frame in JPEG format
-			(flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
+		(flag, encodedImage) = cv2.imencode(".jpg", outputFrame)
 
 			# ensure the frame was successfully encoded
-			if not flag:
-				continue
+		if not flag:
+			continue
 
 		# yield the output frame in the byte format
 		yield(b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + 
@@ -137,23 +139,24 @@ def video_feed():
 if __name__ == '__main__':
 	# app.secret_key = 'super_secret_key'
 	# construct the argument parser and parse command line arguments
-	ap = argparse.ArgumentParser()
-	ap.add_argument("-i", "--ip", type=str, required=True,
-		help="ip address of the device")
-	ap.add_argument("-o", "--port", type=int, required=True,
-		help="ephemeral port number of the server (1024 to 65535)")
-	ap.add_argument("-f", "--frame-count", type=int, default=16,
-		help="# of frames used to construct the background model")
-  args = vars(ap.parse_args())
+# 	ap = argparse.ArgumentParser()
+# 	ap.add_argument("-i", "--ip", type=str, required=True,
+# 		help="ip address of the device")
+# 	ap.add_argument("-o", "--port", type=int, required=True,
+# 		help="ephemeral port number of the server (1024 to 65535)")
+# 	ap.add_argument("-f", "--frame-count", type=int, default=16,
+# 		help="# of frames used to construct the background model")
+#   args = vars(ap.parse_args())
 
 	# start a thread that will perform motion detection
-	t = threading.Thread(target=detect_motion, args=(
-		args["frame_count"],))
-	t.daemon = True
-	t.start()
+	# t = threading.Thread(target=detect_motion, args=(
+	# 	args["frame_count"],))
+	# t.daemon = True
+	# t.start()
 
 	# start the flask app
-	app.run(host=args["ip"], port=args["port"], debug=True,
-		threaded=True, use_reloader=False)
+	# app.run(host=args["ip"], port=args["port"], debug=True,
+	# 	threaded=True, use_reloader=False)
+	app.run(host='0.0.0.0', port=PORT)
   
 vs.stop()
