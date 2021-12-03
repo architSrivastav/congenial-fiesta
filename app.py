@@ -7,7 +7,7 @@ from imutils.video import VideoStream
 from flask import Response
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash
 
-import threading
+# import threading
 import argparse
 import datetime
 import imutils
@@ -18,8 +18,8 @@ import imutils
 import sys
 import os
 
-import matplotlib
-import matplotlib.pyplot as plt
+# import matplotlib
+# import matplotlib.pyplot as plt
 import copy
 import tensorflow as tf
 # Disable tensorflow compilation warnings
