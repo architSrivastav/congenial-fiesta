@@ -69,8 +69,8 @@ def detect_motion(frameCount):
 	# read thus far
 	total = 0
   label_lines = [line.rstrip() for line
-					in tf.io.gfile.GFile("logs/trained_labels.txt")]
-	with tf.compat.v1.gfile.FastGFile("logs/trained_graph.pb", 'rb') as f:
+					in tf.io.gfile.GFile("trained_labels.txt")]
+	with tf.compat.v1.gfile.FastGFile("trained_graph.pb", 'rb') as f:
 		graph_def = tf.compat.v1.GraphDef()
 		graph_def.ParseFromString(f.read())
 		_ = tf.import_graph_def(graph_def, name='')
