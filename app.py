@@ -25,7 +25,7 @@ import tensorflow as tf
 # Disable tensorflow compilation warnings
 os.environ['TF_CPP_MIN_LOG_LEVEL']='2'
 import tensorflow as tf
-global frameCount = 16
+# frameCount 16
 
 # initialize the output frame and a lock used to ensure thread-safe
 # exchanges of the output frames (useful for multiple browsers/tabs
@@ -61,7 +61,8 @@ def predict(image_data, label_lines, sess, softmax_tensor):
 				res = human_string
 		return res, max_score
 
-def detect_motion(frameCount):
+def detect_motion():
+	frameCount = 16
 	# grab global references to the video stream, output frame, and
 	# lock variables
 	global vs, outputFrame
@@ -69,7 +70,7 @@ def detect_motion(frameCount):
 	# initialize the total number of framestostr
 	# read thus far
 	total = 0
-  label_lines = [line.rstrip() for line
+	label_lines = [line.rstrip() for line
 					in tf.io.gfile.GFile("trained_labels.txt")]
 	with tf.compat.v1.gfile.FastGFile("trained_graph.pb", 'rb') as f:
 		graph_def = tf.compat.v1.GraphDef()
